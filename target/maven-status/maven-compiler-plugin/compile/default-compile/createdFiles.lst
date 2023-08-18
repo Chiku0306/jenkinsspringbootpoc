@@ -1,0 +1,16 @@
+com\scalesec\vulnado\LinksController.class
+com\scalesec\vulnado\Cowsay.class
+com\scalesec\vulnado\Postgres.class
+com\scalesec\vulnado\User.class
+com\scalesec\vulnado\VulnadoApplication.class
+com\scalesec\vulnado\LoginController.class
+com\scalesec\vulnado\BadRequest.class
+com\scalesec\vulnado\CowController.class
+com\scalesec\vulnado\Comment.class
+com\scalesec\vulnado\LoginRequest.class
+com\scalesec\vulnado\LoginResponse.class
+com\scalesec\vulnado\CommentsController.class
+com\scalesec\vulnado\Unauthorized.class
+com\scalesec\vulnado\LinkLister.class
+com\scalesec\vulnado\CommentRequest.class
+com\scalesec\vulnado\ServerError.class
