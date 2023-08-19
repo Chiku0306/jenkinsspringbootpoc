@@ -4,9 +4,13 @@ def dockerImageTag = "${env.BUILD_NUMBER}" // Use Jenkins build number as the ta
 pipeline {
     agent any
     
- //   environment {
- //       AWS_CREDENTIALS = credentials('awsspringboot') 
- //   }
+  //  environment {
+  //      AWS_CREDENTIALS = credentials('my-aws-credentials') // Use the ID you set for your AWS credentials
+  //  }
+    
+    tools {
+        maven 'Maven-3.9.4' // This should match the Maven installation name configured in Jenkins
+    }
     
     stages {
         stage('Checkout') {
@@ -17,7 +21,10 @@ pipeline {
         
         stage('Build and Package') {
             steps {
-                sh 'mvn clean package'
+                script {
+                    // Build Maven project using the installed Maven version
+                    sh 'mvn clean package'
+                }
             }
         }
         
