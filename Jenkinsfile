@@ -21,7 +21,7 @@ pipeline {
             }
         }
         
-        stage('Build Docker Image') {
+        stage('Build and Push Docker Image') {
             steps {
                 script {
                     // Build Docker image using the Dockerfile in the workspace directory
