@@ -4,9 +4,9 @@ def dockerImageTag = "${env.BUILD_NUMBER}" // Use Jenkins build number as the ta
 pipeline {
     agent any
     
-  //  environment {
-  //      AWS_CREDENTIALS = credentials('jenkinsecr') 
-  //  }
+    environment {
+        AWS_CREDENTIALS = credentials('jenkinsecr') 
+    }
     
     tools {
         maven 'Maven3.9.4' 
