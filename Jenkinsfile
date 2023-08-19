@@ -9,7 +9,7 @@ pipeline {
   //  }
     
     tools {
-        maven 'Maven-3.9.4' // This should match the Maven installation name configured in Jenkins
+        maven 'Maven3.9.4' // This should match the Maven installation name configured in Jenkins
     }
     
     stages {
