@@ -5,7 +5,7 @@ pipeline {
     agent any
     
   //  environment {
-  //      AWS_CREDENTIALS = credentials('my-aws-credentials') 
+  //      AWS_CREDENTIALS = credentials('jenkinsecr') 
   //  }
     
     tools {
