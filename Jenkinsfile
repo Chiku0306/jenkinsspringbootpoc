@@ -5,11 +5,11 @@ pipeline {
     agent any
     
   //  environment {
-  //      AWS_CREDENTIALS = credentials('my-aws-credentials') // Use the ID you set for your AWS credentials
+  //      AWS_CREDENTIALS = credentials('my-aws-credentials') 
   //  }
     
     tools {
-        maven 'Maven3.9.4' // This should match the Maven installation name configured in Jenkins
+        maven 'Maven3.9.4' 
     }
     
     stages {
