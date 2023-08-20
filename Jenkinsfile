@@ -1,11 +1,11 @@
-def ecrRepoName = '842485143083.dkr.ecr.ap-southeast-1.amazonaws.com/javaspringpoc'
-def dockerImageTag = "${env.BUILD_NUMBER}" // Use Jenkins build number as the tag
-
 pipeline {
     agent any
-    
     environment {
-        AWS_CREDENTIALS = credentials('jenkinsecr') 
+        AWS_ACCOUNT_ID="842485143083"
+        AWS_DEFAULT_REGION="ap-southeast-1"
+        IMAGE_REPO_NAME="javaspringpoc"
+        IMAGE_TAG="${env.BUILD_NUMBER}"
+        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
     }
     
     tools {
@@ -19,35 +19,29 @@ pipeline {
             }
         }
         
-        stage('Build and Package') {
+        stage('Build Springboot and Package') {
             steps {
                 script {
-                    // Build Maven project using the installed Maven version
                     sh 'mvn clean package'
                 }
             }
         }
-        stage('Initialize'){
+        
+        stage('Build Docker Image') {
             steps {
                 script {
-                    def dockerHome = tool 'docker'
-                    env.PATH = "${dockerHome}/bin:${env.PATH}"
-                    sh "sudo usermod -a -G docker jenkins"
-
+                    sh "docker build -t ${IMAGE_REPO_NAME}:${IMAGE_TAG} ."
                 }
             }
         }
-        stage('Build and Push Docker Image') {
+        
+        stage('Push Docker Image to ECR') {
             steps {
                 script {
-                    // Build Docker image using the Dockerfile in the workspace directory
-                    sh "docker build -t ${ecrRepoName}:${dockerImageTag} ."
-                    
-                    // Authenticate to AWS ECR using credentials from environment
-                    sh "docker login -u AWS -p '${AWS_CREDENTIALS.getSecretKey()}' https://${ecrRepoName}"
-                    
-                    // Push Docker image to ECR
-                    sh "docker push ${ecrRepoName}:${dockerImageTag}"
+                    def ecrLogin = sh(script: "aws ecr get-login-password --region ${AWS_DEFAULT_REGION}", returnStdout: true).trim()
+                    sh "docker login -u AWS -p '${ecrLogin}' ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+                    sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}"
+                    sh "docker push ${REPOSITORY_URI}"
                 }
             }
         }
