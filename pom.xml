@@ -16,6 +16,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<sonar.jacoco.reportPaths>target/site/jacoco/jacoco.xml</sonar.jacoco.reportPaths>
 	</properties>
 
 	<dependencies>
@@ -29,14 +30,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.2.5</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
@@ -74,6 +67,30 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.7</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.9.1.2184</version>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -85,6 +102,7 @@
 			</activation>
 			<properties>
 				<sonar.host.url>https://sonarqube.cloudgaurdtechnologies.com/</sonar.host.url>
+				<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 			</properties>
 		</profile>
 	</profiles>
