@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">vulnado</a> &gt; <a href="index.source.html" class="el_package">com.scalesec.vulnado</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package com.scalesec.vulnado;
+
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import javax.crypto.SecretKey;
+
+public class User {
+  public String id, username, hashedPassword;
+
+<span class="nc" id="L15">  public User(String id, String username, String hashedPassword) {</span>
+<span class="nc" id="L16">    this.id = id;</span>
+<span class="nc" id="L17">    this.username = username;</span>
+<span class="nc" id="L18">    this.hashedPassword = hashedPassword;</span>
+<span class="nc" id="L19">  }</span>
+
+  public String token(String secret) {
+<span class="nc" id="L22">    SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());</span>
+<span class="nc" id="L23">    String jws = Jwts.builder().setSubject(this.username).signWith(key).compact();</span>
+<span class="nc" id="L24">    return jws;</span>
+  }
+
+  public static void assertAuth(String secret, String token) {
+    try {
+<span class="nc" id="L29">      SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());</span>
+<span class="nc" id="L30">      Jwts.parser()</span>
+<span class="nc" id="L31">        .setSigningKey(key)</span>
+<span class="nc" id="L32">        .parseClaimsJws(token);</span>
+<span class="nc" id="L33">    } catch(Exception e) {</span>
+<span class="nc" id="L34">      e.printStackTrace();</span>
+<span class="nc" id="L35">      throw new Unauthorized(e.getMessage());</span>
+<span class="nc" id="L36">    }</span>
+<span class="nc" id="L37">  }</span>
+
+  public static User fetch(String un) {
+<span class="nc" id="L40">    Statement stmt = null;</span>
+<span class="nc" id="L41">    User user = null;</span>
+    try {
+<span class="nc" id="L43">      Connection cxn = Postgres.connection();</span>
+<span class="nc" id="L44">      stmt = cxn.createStatement();</span>
+<span class="nc" id="L45">      System.out.println(&quot;Opened database successfully&quot;);</span>
+
+<span class="nc" id="L47">      String query = &quot;select * from users where username = '&quot; + un + &quot;' limit 1&quot;;</span>
+<span class="nc" id="L48">      System.out.println(query);</span>
+<span class="nc" id="L49">      ResultSet rs = stmt.executeQuery(query);</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">      if (rs.next()) {</span>
+<span class="nc" id="L51">        String user_id = rs.getString(&quot;user_id&quot;);</span>
+<span class="nc" id="L52">        String username = rs.getString(&quot;username&quot;);</span>
+<span class="nc" id="L53">        String password = rs.getString(&quot;password&quot;);</span>
+<span class="nc" id="L54">        user = new User(user_id, username, password);</span>
+      }
+<span class="nc" id="L56">      cxn.close();</span>
+<span class="nc" id="L57">    } catch (Exception e) {</span>
+<span class="nc" id="L58">      e.printStackTrace();</span>
+<span class="nc" id="L59">      System.err.println(e.getClass().getName()+&quot;: &quot;+e.getMessage());</span>
+    } finally {
+<span class="nc" id="L61">      return user;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

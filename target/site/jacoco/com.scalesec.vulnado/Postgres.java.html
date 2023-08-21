@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Postgres.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">vulnado</a> &gt; <a href="index.source.html" class="el_package">com.scalesec.vulnado</a> &gt; <span class="el_source">Postgres.java</span></div><h1>Postgres.java</h1><pre class="source lang-java linenums">package com.scalesec.vulnado;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.UUID;
+
+<span class="nc" id="L12">public class Postgres {</span>
+
+    public static Connection connection() {
+        try {
+<span class="nc" id="L16">            Class.forName(&quot;org.postgresql.Driver&quot;);</span>
+<span class="nc" id="L17">            String url = new StringBuilder()</span>
+<span class="nc" id="L18">                    .append(&quot;jdbc:postgresql://&quot;)</span>
+<span class="nc" id="L19">                    .append(System.getenv(&quot;PGHOST&quot;))</span>
+<span class="nc" id="L20">                    .append(&quot;/&quot;)</span>
+<span class="nc" id="L21">                    .append(System.getenv(&quot;PGDATABASE&quot;)).toString();</span>
+<span class="nc" id="L22">            return DriverManager.getConnection(url,</span>
+<span class="nc" id="L23">                    System.getenv(&quot;PGUSER&quot;), System.getenv(&quot;PGPASSWORD&quot;));</span>
+<span class="nc" id="L24">        } catch (Exception e) {</span>
+<span class="nc" id="L25">            e.printStackTrace();</span>
+<span class="nc" id="L26">            System.err.println(e.getClass().getName()+&quot;: &quot;+e.getMessage());</span>
+<span class="nc" id="L27">            System.exit(1);</span>
+        }
+<span class="nc" id="L29">        return null;</span>
+    }
+    public static void setup(){
+        try {
+<span class="nc" id="L33">            System.out.println(&quot;Setting up Database...&quot;);</span>
+<span class="nc" id="L34">            Connection c = connection();</span>
+<span class="nc" id="L35">            Statement stmt = c.createStatement();</span>
+
+            // Create Schema
+<span class="nc" id="L38">            stmt.executeUpdate(&quot;CREATE TABLE IF NOT EXISTS users(user_id VARCHAR (36) PRIMARY KEY, username VARCHAR (50) UNIQUE NOT NULL, password VARCHAR (50) NOT NULL, created_on TIMESTAMP NOT NULL, last_login TIMESTAMP)&quot;);</span>
+<span class="nc" id="L39">            stmt.executeUpdate(&quot;CREATE TABLE IF NOT EXISTS comments(id VARCHAR (36) PRIMARY KEY, username VARCHAR (36), body VARCHAR (500), created_on TIMESTAMP NOT NULL)&quot;);</span>
+
+            // Clean up any existing data
+<span class="nc" id="L42">            stmt.executeUpdate(&quot;DELETE FROM users&quot;);</span>
+<span class="nc" id="L43">            stmt.executeUpdate(&quot;DELETE FROM comments&quot;);</span>
+
+            // Insert seed data
+<span class="nc" id="L46">            insertUser(&quot;admin&quot;, &quot;!!SuperSecretAdmin!!&quot;);</span>
+<span class="nc" id="L47">            insertUser(&quot;alice&quot;, &quot;AlicePassword!&quot;);</span>
+<span class="nc" id="L48">            insertUser(&quot;bob&quot;, &quot;BobPassword!&quot;);</span>
+<span class="nc" id="L49">            insertUser(&quot;eve&quot;, &quot;$EVELknev^l&quot;);</span>
+<span class="nc" id="L50">            insertUser(&quot;rick&quot;, &quot;!GetSchwifty!&quot;);</span>
+
+<span class="nc" id="L52">            insertComment(&quot;rick&quot;, &quot;cool dog m8&quot;);</span>
+<span class="nc" id="L53">            insertComment(&quot;alice&quot;, &quot;OMG so cute!&quot;);</span>
+<span class="nc" id="L54">            c.close();</span>
+<span class="nc" id="L55">        } catch (Exception e) {</span>
+<span class="nc" id="L56">            System.out.println(e);</span>
+<span class="nc" id="L57">            System.exit(1);</span>
+<span class="nc" id="L58">        }</span>
+<span class="nc" id="L59">    }</span>
+
+    // Java program to calculate MD5 hash value
+    public static String md5(String input)
+    {
+        try {
+
+            // Static getInstance method is called with hashing MD5
+<span class="nc" id="L67">            MessageDigest md = MessageDigest.getInstance(&quot;MD5&quot;);</span>
+
+            // digest() method is called to calculate message digest
+            //  of an input digest() return array of byte
+<span class="nc" id="L71">            byte[] messageDigest = md.digest(input.getBytes());</span>
+
+            // Convert byte array into signum representation
+<span class="nc" id="L74">            BigInteger no = new BigInteger(1, messageDigest);</span>
+
+            // Convert message digest into hex value
+<span class="nc" id="L77">            String hashtext = no.toString(16);</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">            while (hashtext.length() &lt; 32) {</span>
+<span class="nc" id="L79">                hashtext = &quot;0&quot; + hashtext;</span>
+            }
+<span class="nc" id="L81">            return hashtext;</span>
+        }
+
+        // For specifying wrong message digest algorithms
+<span class="nc" id="L85">        catch (NoSuchAlgorithmException e) {</span>
+<span class="nc" id="L86">            throw new RuntimeException(e);</span>
+        }
+    }
+
+    private static void insertUser(String username, String password) {
+<span class="nc" id="L91">       String sql = &quot;INSERT INTO users (user_id, username, password, created_on) VALUES (?, ?, ?, current_timestamp)&quot;;</span>
+<span class="nc" id="L92">       PreparedStatement pStatement = null;</span>
+       try {
+<span class="nc" id="L94">          pStatement = connection().prepareStatement(sql);</span>
+<span class="nc" id="L95">          pStatement.setString(1, UUID.randomUUID().toString());</span>
+<span class="nc" id="L96">          pStatement.setString(2, username);</span>
+<span class="nc" id="L97">          pStatement.setString(3, md5(password));</span>
+<span class="nc" id="L98">          pStatement.executeUpdate();</span>
+<span class="nc" id="L99">       } catch(Exception e) {</span>
+<span class="nc" id="L100">         e.printStackTrace();</span>
+<span class="nc" id="L101">       }</span>
+<span class="nc" id="L102">    }</span>
+
+    private static void insertComment(String username, String body) {
+<span class="nc" id="L105">        String sql = &quot;INSERT INTO comments (id, username, body, created_on) VALUES (?, ?, ?, current_timestamp)&quot;;</span>
+<span class="nc" id="L106">        PreparedStatement pStatement = null;</span>
+        try {
+<span class="nc" id="L108">            pStatement = connection().prepareStatement(sql);</span>
+<span class="nc" id="L109">            pStatement.setString(1, UUID.randomUUID().toString());</span>
+<span class="nc" id="L110">            pStatement.setString(2, username);</span>
+<span class="nc" id="L111">            pStatement.setString(3, body);</span>
+<span class="nc" id="L112">            pStatement.executeUpdate();</span>
+<span class="nc" id="L113">        } catch(Exception e) {</span>
+<span class="nc" id="L114">            e.printStackTrace();</span>
+<span class="nc" id="L115">        }</span>
+<span class="nc" id="L116">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
