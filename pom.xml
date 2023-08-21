@@ -102,11 +102,7 @@
 			</activation>
 			<properties>
 				<sonar.host.url>https://sonarqube.cloudgaurdtechnologies.com/</sonar.host.url>
-<<<<<<< HEAD
 				<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-=======
-			        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
->>>>>>> 114054fe29cb6eea58dfbf8ce74af13d234c7fef
 			</properties>
 		</profile>
 	</profiles>
