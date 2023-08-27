@@ -59,7 +59,12 @@
 		<scope>runtime</scope>
 	    </dependency>
 	    </dependencies>
-
+            <distributionManagement>
+                <repository>
+                    <id>tech-maven-mixed</id>
+                    <url>http://nexus-repo.cloudgaurdtechnologies.com:8081/repository/tech-maven-mixed/</url>
+                </repository>
+            </distributionManagement>	
 	    <build>
 		<plugins>
 		    <plugin>
