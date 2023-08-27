@@ -60,10 +60,14 @@
 	    </dependency>
 	    </dependencies>
             <distributionManagement>
-                <repository>
-                    <id>nexus</id>
-                    <url>http://nexus-repo.cloudgaurdtechnologies.com:8081/repository/tech-maven-mixed/</url>
-                </repository>
+              <snapshotRepository> 
+                <id>nexus</id>
+                <url>http://nexus-repo.cloudgaurdtechnologies.com:8081/repository/tech-maven-mixed/</url>
+	      </snapshotRepository>
+              <repository>
+		<id>nexus</id>
+		<url>http://nexus-repo.cloudgaurdtechnologies.com:8081/repository/tech-maven-mixed/</url>
+	      </repository>	      
             </distributionManagement>	
 	    <build>
 		<plugins>
