@@ -61,7 +61,7 @@
 	    </dependencies>
             <distributionManagement>
                 <repository>
-                    <id>tech-maven-mixed</id>
+                    <id>nexus</id>
                     <url>http://nexus-repo.cloudgaurdtechnologies.com:8081/repository/tech-maven-mixed/</url>
                 </repository>
             </distributionManagement>	
